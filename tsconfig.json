@@ -9,7 +9,7 @@
     },
     "tstl": {
         "luaTarget": "CC-5.2",
-        "luaLibImport": "inline",
+        "luaLibImport": "require",
         "luaBundle": "./build/cc-browser.lua",
         "luaBundleEntry": "./src/main.ts"
     },

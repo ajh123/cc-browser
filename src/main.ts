@@ -1,4 +1,5 @@
 import { parseHTML } from "./dom/html";
+import { DOM } from "./dom";
 
 const html = `
   <!DOCTYPE html>
@@ -16,3 +17,7 @@ const ast = parseHTML(html);
 print(
   textutils.serialiseJSON(ast)
 );
+
+const dom = new DOM(ast);
+const divs = dom.getElementsByTagName("div");
+print(`Found ${divs.length} <div> elements.`);

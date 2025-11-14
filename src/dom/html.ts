@@ -4,11 +4,7 @@ export type Token =
   | { type: "text"; value: string }
   | { type: "open-tag"; tagName: string; attributes: Record<string, string> }
   | { type: "close-tag"; tagName: string }
-  | { type: "self-close-tag"; tagName: string; attributes: Record<string, string> };
-
-// comment and doctype tokens are useful for more robust parsing
-export type TokenExtended =
-  | Token
+  | { type: "self-close-tag"; tagName: string; attributes: Record<string, string> }
   | { type: "comment"; value: string }
   | { type: "doctype"; value: string };
 
@@ -42,8 +38,8 @@ const selfClosingElements = new Set([
   "wbr",
 ]);
 
-export function tokenize(html: string): TokenExtended[] {
-  const tokens: TokenExtended[] = [];
+export function tokenize(html: string): Token[] {
+  const tokens: Token[] = [];
   let i = 0;
 
   while (i < html.length) {
@@ -225,7 +221,7 @@ export function tokenize(html: string): TokenExtended[] {
   return tokens;
 }
 
-export function parse(tokens: TokenExtended[]): ElementNode {
+export function parse(tokens: Token[]): ElementNode {
   // A synthetic root so we can return a single object
   const root: ElementNode = {
     type: "element",

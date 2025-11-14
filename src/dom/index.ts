@@ -15,7 +15,7 @@ export interface TextNode {
 export class DOM {
   constructor(public root: ElementNode) {}
 
-  public getElementsByTagName(tagName: string): ElementNode[] {
+  getElementsByTagName(tagName: string): ElementNode[] {
     const results: ElementNode[] = [];
     function traverse(node: Node) {
       if (node.type === "element") {
@@ -31,7 +31,7 @@ export class DOM {
     return results;
   }
 
-  public getElementById(id: string): ElementNode | null {
+  getElementById(id: string): ElementNode | null {
     let result: ElementNode | null = null;
     function traverse(node: Node) {
       if (node.type === "element") {
@@ -49,7 +49,7 @@ export class DOM {
     return result;
   }
 
-  public getElementsByClassName(className: string): ElementNode[] {
+  getElementsByClassName(className: string): ElementNode[] {
     const results: ElementNode[] = [];
     function traverse(node: Node) {
       if (node.type === "element") {
@@ -65,7 +65,7 @@ export class DOM {
     return results;
   }
 
-  public getElementsByName(name: string): ElementNode[] {
+  getElementsByName(name: string): ElementNode[] {
     const results: ElementNode[] = [];
     function traverse(node: Node) {
       if (node.type === "element") {
@@ -81,7 +81,7 @@ export class DOM {
     return results;
   }
 
-  public getElementsByAttribute(attribute: string, value: string): ElementNode[] {
+  getElementsByAttribute(attribute: string, value: string): ElementNode[] {
     const results: ElementNode[] = [];
     function traverse(node: Node) {
       if (node.type === "element") {

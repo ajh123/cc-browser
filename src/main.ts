@@ -1,23 +1,25 @@
 import { parseHTML } from "./dom/html";
 import { DOM } from "./dom";
+import { Renderer } from "./renderer";
 
-const html = `
-  <!DOCTYPE html>
-  <!-- Example HTML to exercise tokenizer -->
-  <div class=container data-value='a b' disabled>
-    <h1>Hello, world!</h1>
-    <p>This is a <strong>test</strong>.</p>
-    <img src="foo.png">
-    <br>
-    <script>if (a < b) { /* angle bracket inside script */ }</script>
-  </div>
-`;
+print("Enter URL to fetch HTML from:");
+const url = read();
 
-const ast = parseHTML(html);
-print(
-  textutils.serialiseJSON(ast)
-);
+const [response, reason] = http.get(url);
+if (!response) {
+  error("Failed to fetch URL: " + url + " (" + reason + ")");
+}
 
-const dom = new DOM(ast);
-const divs = dom.getElementsByTagName("div");
-print(`Found ${divs.length} <div> elements.`);
+const html = response.readAll();
+
+const root = parseHTML(html);
+// print(
+//   textutils.serialiseJSON(root)
+// );
+
+// const dom = new DOM(root);
+// const divs = dom.getElementsByTagName("div");
+// print(`Found ${divs.length} <div> elements.`);
+
+const renderer = new Renderer(term);
+renderer.render(root);

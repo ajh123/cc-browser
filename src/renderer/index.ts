@@ -1,4 +1,6 @@
-import { ElementNode, Node, TextNode } from "../dom";
+import { Style, StyleSheet, applyTextStyles, UnstyledStyle } from "./style";
+import { ElementNode, Node, TextNode } from "@/dom";
+import { BaseFrame } from "@/libs/basalt";
 
 const hiddenElements = new Set([
   "style",
@@ -10,63 +12,43 @@ const hiddenElements = new Set([
 ]);
 
 export class Renderer {
-  constructor(private term: ITerminal) {}
+  private currentY: number;
+  private currentX: number;
 
-  render(node: Node) {
+  constructor(private frame: BaseFrame, private baseStyles: StyleSheet) {
+    this.currentY = 1;
+    this.currentX = 1;
+  }
+
+  render(node: Node, styles?: Style[]) {
+    styles = styles || UnstyledStyle;
+
     if (node.type === "text") {
-      this.renderText(node);
+      this.renderText(node, styles);
     } else if (node.type === "element") {
       if (hiddenElements.has(node.tagName.toLowerCase())) {
         return; // skip hidden elements
       }
-      this.renderElement(node);
+      this.renderElement(node, styles);
     }
   }
 
-  private renderText(node: TextNode) {
-    // Split by spaces manually without RegExp
-    const words: string[] = [];
-    let currentWord = "";
-    for (let i = 0; i < node.value.length; i++) {
-      const c = node.value[i];
-      if (c === " " || c === "\t" || c === "\n") {
-        if (currentWord !== "") {
-          words.push(currentWord);
-          currentWord = "";
-        }
-      } else {
-        currentWord += c;
-      }
-    }
-    if (currentWord !== "") words.push(currentWord);
-
-    for (const word of words) {
-      const [x, y] = this.term.getCursorPos();
-      const [width] = this.term.getSize();
-
-      // Wrap line if word would overflow
-      if (x + word.length > width) {
-        this.term.setCursorPos(1, y + 1);
-      }
-
-      this.term.write(word + " ");
-    }
+  private renderText(node: TextNode, styles: Style[]) {
+    const label = applyTextStyles(this.frame, styles, node);
+    label.setWidth("{parent.width - " + (this.currentX - 1) + "}");
+    label.setX(this.currentX);
+    label.setY(this.currentY);
+    this.currentY += label.getHeight();
   }
 
-  private renderElement(node: ElementNode) {
-    const isBlock = ["div", "p"].includes(node.tagName);
-
-    if (isBlock) this.newLine();
-
+  private renderElement(node: ElementNode, styles: Style[]) {
     for (const child of node.children) {
-      this.render(child);
+      if (child.type === "text") {
+        const childStyles = this.baseStyles[node.tagName] || UnstyledStyle;
+        this.renderText(child, childStyles);
+      } else {
+        this.render(child, styles);
+      }
     }
-
-    if (isBlock) this.newLine();
-  }
-
-  private newLine() {
-    const [, y] = this.term.getCursorPos();
-    this.term.setCursorPos(1, y + 1);
   }
 }

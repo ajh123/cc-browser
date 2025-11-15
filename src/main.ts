@@ -1,6 +1,7 @@
 import { parseHTML } from "./dom/html";
 import { DOM } from "./dom";
 import { Renderer } from "./renderer";
+import { appendLog } from "./log";
 
 print("Enter URL to fetch HTML from:");
 const url = read();
@@ -13,13 +14,16 @@ if (!response) {
 const html = response.readAll();
 
 const root = parseHTML(html);
-// print(
-//   textutils.serialiseJSON(root)
-// );
+appendLog(
+  textutils.serialiseJSON(root)
+);
 
-// const dom = new DOM(root);
-// const divs = dom.getElementsByTagName("div");
-// print(`Found ${divs.length} <div> elements.`);
+const dom = new DOM(root);
+const divs = dom.getElementsByTagName("div");
+appendLog(`Found ${divs.length} <div> elements.`);
+
+// Debug log: list top-level children for verification
+appendLog("root children", root.children.length, root.children.map((c) => (c.type === "element") ? c.tagName : "#text"));
 
 const renderer = new Renderer(term);
 renderer.render(root);

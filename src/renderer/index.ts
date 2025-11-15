@@ -9,7 +9,6 @@ const hiddenElements = new Set([
   "script",
 ]);
 
-const DEBUG = false; // Set to true temporarily for on-screen debugging
 export class Renderer {
   constructor(private term: ITerminal) {}
 
@@ -51,7 +50,6 @@ export class Renderer {
       }
 
       this.term.write(word + " ");
-      if (DEBUG) print(word + " ");
     }
   }
 
